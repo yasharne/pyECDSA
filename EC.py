@@ -1,4 +1,3 @@
-import math
 import Point
 import Utils
 
@@ -17,13 +16,13 @@ class EC(object):
             return q
         elif q.is_infinite:
             return p
-        elif p != q:
+        else:
             if (q.x - p.x) == 0:
                 point = Point.Point(0, 0)
                 point.is_infinite = True
                 return point
             s = int(((q.y - p.y) * Utils.Utils.mode_inverse(q.x - p.x, self.prime)) % self.prime)
-        xr = int((math.pow(s, 2) - p.x - q.x) % self.prime)
+        xr = int(((s * s) - p.x - q.x) % self.prime)
         yr = int(((s * (p.x - xr)) - p.y) % self.prime)
         r = Point.Point(xr, yr)
         return r
@@ -35,27 +34,18 @@ class EC(object):
             point = Point.Point(0, 0)
             point.is_infinite = True
             return point
-        s = int((((3 * math.pow(p.x, 2)) + self.a) * Utils.Utils.mode_inverse(2 * p.y, self.prime)) % self.prime)
-        xr = int((math.pow(s, 2) - p.x - p.x) % self.prime)
+        s = int((((3 * (p.x * p.x)) + self.a) * Utils.Utils.mode_inverse(2 * p.y, self.prime)) % self.prime)
+        xr = int(((s * s) - p.x - p.x) % self.prime)
         yr = int(((s * (p.x - xr)) - p.y) % self.prime)
         r = Point.Point(xr, yr)
         return r
-        pass
 
     def multiplication(self, p, t):
         bin_t = bin(t)[2:]
-        # print('d: ', t)
-        # print('bin_b: ', bin_t)
-        print('Px: ', p.x)
-        print('Py: ', p.y)
         Q = Point.Point(0, 0)
+        Q.is_infinite = True
         for i, digit in enumerate(bin_t):
-            # print('i: ', i)
-            # print('digit: ', digit)
             Q = self.double(Q)
             if digit == '1':
                 Q = self.addition(Q, p)
-                # print('adding ', Q.x)
-
-            # print("====== ", Q.x)
         return Q
